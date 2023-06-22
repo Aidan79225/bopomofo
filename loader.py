@@ -4,6 +4,7 @@ import os
 import subprocess as sp
 import json
 import sys
+import sqlite3
 words = {}
 words[""] = ""
 
@@ -20,3 +21,12 @@ try:
     load('%s/extension.dict'%(directory))
 except:
     pass
+
+connection = sqlite3.connect("bopomofo.db")
+connection.text_factory = str
+cursor = connection.cursor()
+cursor.execute("DROP TABLE IF EXISTS bopomofo")
+cursor.execute("CREATE TABLE bopomofo(text, bopomofo)")
+for (k, v) in words.items():
+    cursor.execute("INSERT INTO bopomofo VALUES (?,?)", (k, v))
+
